@@ -34,6 +34,17 @@ typedef struct notas{
     long unsigned int timestamp;
 }Notas_t;
 
+typedef struct notas_usu{
+    unsigned int item;
+    float nota;
+    long unsigned int timestamp;
+}Notas_usu_t;
+
+typedef struct sim_item{
+    unsigned int item;
+    float similaridade;
+}Sim_item_t;
+
 class Le{
     string arquivo_usuario;
     string arquivo_item;    
@@ -41,10 +52,11 @@ class Le{
     public:
         Le(string a_usuario,string a_item,string a_notas);
 
-	void le_tudo(vector<unsigned int>& u,vector<unsigned int>& i,unordered_map< unsigned int,vector<Notas_t> >& n,unordered_map< unsigned int,vector<unsigned int> >& un);
+	void le_tudo(vector<unsigned int>& u,vector<unsigned int>& i,unordered_map< unsigned int,vector<Notas_t> >& n,unordered_map< unsigned int,vector<Notas_usu_t> >& un);
 	void le_usuarios(vector<unsigned int>& u);
 	void le_itens(vector<unsigned int>& i);
-	void le_notas(unordered_map< unsigned int,vector< Notas_t> >& n,unordered_map< unsigned int,vector<unsigned int> >& un);
+	void le_notas(unordered_map< unsigned int,vector< Notas_t> >& n,unordered_map< unsigned int,vector<Notas_usu_t> >& un);
+        void le_similaridade(unordered_map<unsigned int, vector<Sim_item_t> >& sim_matrix);
 
 	/**  funcoes de teste**/
 	void imprime_notas(unordered_map< unsigned int,vector< Notas_t> > n);

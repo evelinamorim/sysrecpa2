@@ -28,7 +28,7 @@ Le::Le(string a_usuario,string a_item,string a_notas){
     arquivo_notas = a_notas;
 }
 
-void Le::le_tudo(vector<unsigned int>& u,vector<unsigned int>& i,unordered_map< unsigned int,vector< Notas_t> >& n,unordered_map< unsigned int,vector<unsigned int> >& un){
+void Le::le_tudo(vector<unsigned int>& u,vector<unsigned int>& i,unordered_map< unsigned int,vector< Notas_t> >& n,unordered_map< unsigned int,vector<Notas_usu_t> >& un){
     le_usuarios(u);
     le_itens(i);
     le_notas(n,un);
@@ -109,7 +109,7 @@ void Le::le_itens(vector<unsigned int>& i){
     }
 }
 
-void Le::le_notas(unordered_map< unsigned int,vector<Notas_t> >& n,unordered_map< unsigned int,vector<unsigned int> >& un){
+void Le::le_notas(unordered_map< unsigned int,vector<Notas_t> >& n,unordered_map< unsigned int,vector<Notas_usu_t> >& un){
     ifstream fd_item(arquivo_notas);
     vector<string> tok;
 
@@ -117,6 +117,7 @@ void Le::le_notas(unordered_map< unsigned int,vector<Notas_t> >& n,unordered_map
         while (!fd_item.eof()){
 	    string linha;
 	    Notas_t r;
+	    Notas_usu_t ur;
 
 	    getline(fd_item,linha);
 	    tokenizar(linha,'\t',tok);
@@ -136,19 +137,70 @@ void Le::le_notas(unordered_map< unsigned int,vector<Notas_t> >& n,unordered_map
 
 		string is = tok.back();
 		tok.pop_back();
+		ur.item = atoi(is.c_str());
 
 		string us = tok.back();
 		r.usuario_id = atoi(us.c_str());
 		tok.pop_back();
 
 		//mapeando por item
-		n[atoi(is.c_str())].push_back(r);
+		n[ur.item].push_back(r);
+
 		//mapeando por usuario
-		un[r.usuario_id].push_back(r.nota);
+		ur.nota = r.nota;
+		ur.timestamp = r.timestamp;
+
+		un[r.usuario_id].push_back(ur);
 
 		tok.clear();
 	    }
 	}
         fd_item.close();
     }
+}
+
+void Le::le_similaridade(unordered_map<unsigned int, vector<Sim_item_t> >& sim_matrix){
+
+    ifstream sim_arq("sim.txt",ios::in);
+    vector<string> tok;
+
+    if (sim_arq.is_open()){
+        while (!sim_arq.eof()){
+	    string linha;
+	    Sim_item_t r;
+
+	    getline(sim_arq,linha);
+	    tokenizar(linha,' ',tok);
+
+	    //cout<<"--> "<<tok.size()<<endl;
+
+	    if (tok.size()>0){
+
+		string sim12 = tok.back();
+		tok.pop_back();
+		r.similaridade = atof(sim12.c_str());
+
+		string i2 = tok.back();
+		tok.pop_back();
+		unsigned int item2 = atoi(i2.c_str());
+
+		string i1 = tok.back();
+		tok.pop_back();
+		unsigned int item1 = atoi(i1.c_str());
+
+		//mapeando item 1
+		r.item = item2;
+		sim_matrix[item1].push_back(r);
+
+		//mapeando item 2
+		r.item = item1;
+		sim_matrix[item2].push_back(r);
+
+		tok.clear();
+	    }
+	}
+        sim_arq.close();
+    }
+
+    sim_arq.close();
 }

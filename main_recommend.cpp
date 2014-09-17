@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  main.cpp
+ *       Filename:  main_recommend.cpp
  *
- *    Description:  arquivo principal do sistema de recomendacao item-based
+ *    Description:  arquivo principal que recomenda itens
  *
  *        Version:  1.0
- *        Created:  09/15/14 10:00:41
+ *        Created:  09/16/14 12:49:56
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -15,6 +15,7 @@
  *
  * =====================================================================================
  */
+
 
 #include <iostream>
 #include "item.h"
@@ -28,7 +29,7 @@ int main(int argc,char** argv){
 
     if (argc != 4){
 	cout<<"*** Error *** Wrong Number of Arguments "<<endl;
-	cout<<"Usage: ./tp2-index userfilename itemfilename ratingfilename"<<endl;
+	cout<<"Usage: ./tp2-recommend userfilename itemfilename ratingfilename"<<endl;
 	return -1;
 	    
     }
@@ -38,15 +39,15 @@ int main(int argc,char** argv){
 
     unordered_map< unsigned int,vector<Notas_t> > n;
     unordered_map< unsigned int,vector<Notas_usu_t> > un;
+    unordered_map<unsigned int, vector<Sim_item_t> > sim_matrix;
 
     leObj.le_tudo(u,i,n,un);
+    leObj.le_similaridade(sim_matrix);
 
     Item itemObj;
 
-    itemObj.computa_media_usu(un);
-    //itemObj.imprime_media();
+    itemObj.prediz_similaridade(u,i,un,sim_matrix);
 
-    itemObj.escreve_similaridades(i,n);
 
     return 0;
 }

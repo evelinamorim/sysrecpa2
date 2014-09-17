@@ -21,6 +21,7 @@
 #include <cmath>
 #include <fstream>
 #include <iomanip>  
+#include <algorithm>
 #include "le.h"
 
 using namespace std;
@@ -28,18 +29,17 @@ using namespace std;
 #ifndef __ITEM_H_
 #define __ITEM_H_
 
+#define TOPITEMS 100
+
 class Item{
     unordered_map<unsigned int,float> media;    
     public:
         //computa a media de nota de cada usuario
-	void computa_media_usu(unordered_map< unsigned int,vector<unsigned int> >& un);
-	//dado um item a e um item b, retorna as respectivas intersecoes a_out 
-	//e b_out com relação aos usuarios em comum. Precisa retornas duas 
-	//saidas, pq embora tenham os usuarios em cum iguais, as notas atribuidas 
-	//para cada item eh diferente
-        void intersecao(unsigned int a,unsigned int b,unordered_map<unsigned int, vector<Notas_t> > n,vector<Notas_t>& a_out,vector<Notas_t>& b_out);
+	void computa_media_usu(unordered_map< unsigned int,vector<Notas_usu_t> >& un);
 	float computa_sim(unsigned int a,unsigned int b,unordered_map< unsigned int,vector<Notas_t> >& n);
         void  escreve_similaridades(vector<unsigned int> i,unordered_map<unsigned int, vector<Notas_t> > n);
+        void  prediz_similaridade(vector<unsigned int> u, vector<unsigned int> i, unordered_map<unsigned, vector<Notas_usu_t> > un,unordered_map<unsigned int, vector<Sim_item_t> > sim_matrix);
+        void escreve_predicao(unsigned int usuario,vector<Sim_item_t> si);
 
 	//funcoes de teste
 	void imprime_media();
