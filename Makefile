@@ -18,6 +18,6 @@ recommend:
 
 run:
 	#time ./tp2-index $(datadir)/u.user $(datadir)/u.item $(datadir)/ua.base
-	#time ./tp2-recommend $(datadir)/u.user $(datadir)/u.item $(datadir)/ua.base
+	time ./tp2-recommend $(datadir)/u.user $(datadir)/u.item $(datadir)/ua.base
 	#./tp2-index toy.user toy.item toy.base
-	./tp2-recommend toy.user toy.item toy.base
+	#./tp2-recommend toy.user toy.item toy.base

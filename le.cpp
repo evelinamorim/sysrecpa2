@@ -22,17 +22,20 @@
 
 using namespace std;
 
+bool compara_sim(Sim_item_t a,Sim_item_t b){
+    return (a.similaridade>b.similaridade);
+}
+
 Le::Le(string a_usuario,string a_item,string a_notas){
     arquivo_usuario = a_usuario;
     arquivo_item = a_item;    
     arquivo_notas = a_notas;
 }
 
-void Le::le_tudo(vector<unsigned int>& u,vector<unsigned int>& i,unordered_map< unsigned int,vector< Notas_t> >& n,unordered_map< unsigned int,vector<Notas_usu_t> >& un){
+unordered_map<unsigned int,float> Le::le_tudo(vector<unsigned int>& u,vector<unsigned int>& i,unordered_map< unsigned int,vector< Notas_t> >& n,unordered_map< unsigned int,vector<Notas_usu_t> >& un){
     le_usuarios(u);
     le_itens(i);
-    le_notas(n,un);
-    //imprime_notas(n);
+    return le_notas(n,un);
 }
 
 void Le::imprime_notas(unordered_map< unsigned int,vector< Notas_t> > n){
@@ -109,9 +112,10 @@ void Le::le_itens(vector<unsigned int>& i){
     }
 }
 
-void Le::le_notas(unordered_map< unsigned int,vector<Notas_t> >& n,unordered_map< unsigned int,vector<Notas_usu_t> >& un){
+unordered_map<unsigned int,float> Le::le_notas(unordered_map< unsigned int,vector<Notas_t> >& n,unordered_map< unsigned int,vector<Notas_usu_t> >& un){
     ifstream fd_item(arquivo_notas);
     vector<string> tok;
+    unordered_map<unsigned int,float> media;
 
     if (fd_item.is_open()){
         while (!fd_item.eof()){
@@ -143,8 +147,14 @@ void Le::le_notas(unordered_map< unsigned int,vector<Notas_t> >& n,unordered_map
 		r.usuario_id = atoi(us.c_str());
 		tok.pop_back();
 
+		if (media.find(r.usuario_id)!= media.end()){
+		    media[r.usuario_id] += r.nota;
+		}else{
+		    media[r.usuario_id] = r.nota;
+		}
+
 		//mapeando por item
-		n[ur.item].push_back(r);
+		//n[ur.item].push_back(r);
 
 		//mapeando por usuario
 		ur.nota = r.nota;
@@ -156,7 +166,15 @@ void Le::le_notas(unordered_map< unsigned int,vector<Notas_t> >& n,unordered_map
 	    }
 	}
         fd_item.close();
+
+	unordered_map<unsigned int,float>::iterator it_media = media.begin();
+	while (it_media != media.end()){
+	    it_media->second = it_media->second/(un[it_media->first].size());
+	    it_media++;
+	}
     }
+
+    return media;
 }
 
 void Le::le_similaridade(unordered_map<unsigned int, vector<Sim_item_t> >& sim_matrix){
@@ -200,6 +218,13 @@ void Le::le_similaridade(unordered_map<unsigned int, vector<Sim_item_t> >& sim_m
 	    }
 	}
         sim_arq.close();
+    }
+
+    //ordenar cada item de acordo com a similaridade
+    unordered_map<unsigned int, vector<Sim_item_t> >::iterator it_sim_matrix = sim_matrix.begin();
+    while (it_sim_matrix!=sim_matrix.end()){
+	sort(it_sim_matrix->second.begin(),it_sim_matrix->second.end(),compara_sim);
+	it_sim_matrix++;
     }
 
     sim_arq.close();

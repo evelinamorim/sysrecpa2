@@ -41,12 +41,14 @@ int main(int argc,char** argv){
     unordered_map< unsigned int,vector<Notas_usu_t> > un;
     unordered_map<unsigned int, vector<Sim_item_t> > sim_matrix;
 
-    leObj.le_tudo(u,i,n,un);
+    unordered_map<unsigned int,float> media = leObj.le_tudo(u,i,n,un);
     leObj.le_similaridade(sim_matrix);
 
     Item itemObj;
 
-    itemObj.prediz_similaridade(u,i,un,sim_matrix);
+    itemObj.normaliza_nota(u,media,n,un);
+
+    itemObj.prediz_similaridade(u,i,un,sim_matrix,media);
 
 
     return 0;

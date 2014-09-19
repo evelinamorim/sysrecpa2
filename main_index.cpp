@@ -39,11 +39,13 @@ int main(int argc,char** argv){
     unordered_map< unsigned int,vector<Notas_t> > n;
     unordered_map< unsigned int,vector<Notas_usu_t> > un;
 
-    leObj.le_tudo(u,i,n,un);
+    unordered_map<unsigned int,float>  media = leObj.le_tudo(u,i,n,un);
 
     Item itemObj;
 
-    itemObj.computa_media_usu(un);
+    itemObj.normaliza_nota(u,media,n,un);
+    //itemObj.imprime_nota(un);
+    //itemObj.computa_media_usu(un);
     //itemObj.imprime_media();
 
     itemObj.escreve_similaridades(i,n);
